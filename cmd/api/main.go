@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -29,6 +30,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Cannot init postgres conn: %v", err)
 	}
+	defer conn.Close(context.Background())
+
 	queries := db.New(conn)
 	h := &handler.UrlHandler{
 		Queries: queries,

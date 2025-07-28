@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
 
 	"github.com/King0625/SD.urlshortener/internal/db"
 	"github.com/King0625/SD.urlshortener/pkg/utils"
@@ -50,13 +52,14 @@ func (h *UrlHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
+		fmt.Println(err)
 		message = "create short url failed"
 		utils.RespondError(w, http.StatusInternalServerError, "INTERNAL_ERROR", message, nil)
 		return
 	}
 
 	res := ShortenResponse{
-		ShortURL: "http://localhost:9527/" + result.Code,
+		ShortURL: os.Getenv("DOMAIN") + "/" + result.Code,
 	}
 
 	message = "Create short url successfully"

@@ -16,6 +16,5 @@ func InitPostgres(dsn string) (*pgx.Conn, error) {
 		os.Exit(1)
 	}
 
-	defer conn.Close(context.Background())
 	return conn, nil
 }
