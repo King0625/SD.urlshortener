@@ -7,8 +7,9 @@ import (
 	"os"
 
 	"github.com/King0625/SD.urlshortener/internal/db"
-	"github.com/King0625/SD.urlshortener/internal/db/sqlc"
 	"github.com/King0625/SD.urlshortener/internal/handler"
+	"github.com/King0625/SD.urlshortener/internal/repository"
+	"github.com/King0625/SD.urlshortener/internal/service"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 )
@@ -33,15 +34,13 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	queries := sqlc.New(conn)
-	h := &handler.UrlHandler{
-		Queries: queries,
-		Conn:    conn,
-	}
+	urlRepository := repository.NewUrlRepository(conn)
+	urlService := service.NewUrlService(urlRepository)
+	urlHandler := handler.UrlHandler{Service: urlService}
 
 	r := chi.NewRouter()
-	r.Post("/shorten", h.ShortenURL)
-	r.Get("/{code}", h.Redirect)
+	r.Post("/shorten", urlHandler.ShortenURL)
+	r.Get("/{code}", urlHandler.Redirect)
 
 	log.Println("Server running at :8080")
 	http.ListenAndServe(":8080", r)

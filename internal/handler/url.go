@@ -2,29 +2,16 @@ package handler
 
 import (
 	"fmt"
-	"math/rand"
 	"net/http"
 	"os"
 
-	"github.com/King0625/SD.urlshortener/internal/db/sqlc"
+	"github.com/King0625/SD.urlshortener/internal/service"
 	"github.com/King0625/SD.urlshortener/pkg/utils"
 	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5"
 )
 
-const charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-func generateCode(n int) string {
-	b := make([]byte, n)
-	for i := range b {
-		b[i] = charSet[rand.Intn(len(charSet))]
-	}
-	return string(b)
-}
-
 type UrlHandler struct {
-	Queries *sqlc.Queries
-	Conn    *pgx.Conn
+	Service service.UrlService
 }
 
 type ShortenRequest struct {
@@ -44,12 +31,7 @@ func (h *UrlHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	code := generateCode(6)
-
-	result, err := h.Queries.CreateURL(r.Context(), sqlc.CreateURLParams{
-		Code:        code,
-		OriginalUrl: req.URL,
-	})
+	result, err := h.Service.ShortenUrl(r.Context(), req.URL)
 
 	if err != nil {
 		fmt.Println(err)
@@ -70,7 +52,7 @@ func (h *UrlHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	var message string
 	code := chi.URLParam(r, "code")
 
-	urlRow, err := h.Queries.GetURLByCode(r.Context(), code)
+	urlRow, err := h.Service.GetUrlByCode(r.Context(), code)
 	if err != nil {
 		message = "short url not found"
 		utils.RespondError(w, http.StatusNotFound, "SHORT_URL_NOT_FOUND", message, nil)
