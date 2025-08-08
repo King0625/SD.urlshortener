@@ -10,6 +10,7 @@ import (
 type UrlRepository interface {
 	Create(ctx context.Context, url sqlc.CreateURLParams) (sqlc.Url, error)
 	GetOneByCode(ctx context.Context, code string) (sqlc.Url, error)
+	DeleteOneByCode(ctx context.Context, code string) error
 }
 
 type urlRepository struct {
@@ -31,4 +32,8 @@ func (r *urlRepository) Create(ctx context.Context, url sqlc.CreateURLParams) (s
 
 func (r *urlRepository) GetOneByCode(ctx context.Context, code string) (sqlc.Url, error) {
 	return r.Queries.GetURLByCode(ctx, code)
+}
+
+func (r *urlRepository) DeleteOneByCode(ctx context.Context, code string) error {
+	return r.Queries.DeleteURLByCode(ctx, code)
 }

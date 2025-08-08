@@ -60,3 +60,17 @@ func (h *UrlHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, urlRow.OriginalUrl, http.StatusFound)
 }
+
+func (h *UrlHandler) DeleteUrlByCode(w http.ResponseWriter, r *http.Request) {
+	var message string
+	code := chi.URLParam(r, "code")
+
+	err := h.Service.DeleteUrlByCode(r.Context(), code)
+	if err != nil {
+		message = "delete url error"
+		utils.RespondError(w, http.StatusInternalServerError, "INTERNAL_ERROR", message, nil)
+	}
+
+	message = "delete short url successfully"
+	utils.RespondSuccess(w, http.StatusOK, message, nil)
+}
