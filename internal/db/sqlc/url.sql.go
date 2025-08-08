@@ -31,6 +31,15 @@ func (q *Queries) CreateURL(ctx context.Context, arg CreateURLParams) (Url, erro
 	return i, err
 }
 
+const deleteURLByCode = `-- name: DeleteURLByCode :exec
+DELETE FROM urls WHERE code = $1
+`
+
+func (q *Queries) DeleteURLByCode(ctx context.Context, code string) error {
+	_, err := q.db.Exec(ctx, deleteURLByCode, code)
+	return err
+}
+
 const getURLByCode = `-- name: GetURLByCode :one
 SELECT id, code, original_url, created_at FROM urls WHERE code = $1
 `

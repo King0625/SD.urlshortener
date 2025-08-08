@@ -41,7 +41,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Post("/shorten", urlHandler.ShortenURL)
 	r.Get("/{code}", urlHandler.Redirect)
-
+	r.Delete("/{code}", urlHandler.DeleteUrlByCode)
 	log.Println("Server running at :8080")
 	http.ListenAndServe(":8080", r)
 }

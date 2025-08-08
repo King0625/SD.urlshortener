@@ -21,6 +21,7 @@ func generateCode(n int) string {
 type UrlService interface {
 	ShortenUrl(ctx context.Context, originalUrl string) (sqlc.Url, error)
 	GetUrlByCode(ctx context.Context, code string) (sqlc.Url, error)
+	DeleteUrlByCode(ctx context.Context, code string) error
 }
 
 type urlService struct {
@@ -42,4 +43,13 @@ func (s *urlService) ShortenUrl(ctx context.Context, originalUrl string) (sqlc.U
 
 func (s *urlService) GetUrlByCode(ctx context.Context, code string) (sqlc.Url, error) {
 	return s.repo.GetOneByCode(ctx, code)
+}
+
+func (s *urlService) DeleteUrlByCode(ctx context.Context, code string) error {
+	_, err := s.repo.GetOneByCode(ctx, code)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.DeleteOneByCode(ctx, code)
 }
