@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/King0625/SD.urlshortener/internal/db"
+	"github.com/King0625/SD.urlshortener/internal/db/sqlc"
 	"github.com/King0625/SD.urlshortener/pkg/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5"
@@ -23,7 +23,7 @@ func generateCode(n int) string {
 }
 
 type UrlHandler struct {
-	Queries *db.Queries
+	Queries *sqlc.Queries
 	Conn    *pgx.Conn
 }
 
@@ -46,7 +46,7 @@ func (h *UrlHandler) ShortenURL(w http.ResponseWriter, r *http.Request) {
 
 	code := generateCode(6)
 
-	result, err := h.Queries.CreateURL(r.Context(), db.CreateURLParams{
+	result, err := h.Queries.CreateURL(r.Context(), sqlc.CreateURLParams{
 		Code:        code,
 		OriginalUrl: req.URL,
 	})

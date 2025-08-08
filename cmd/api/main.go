@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/King0625/SD.urlshortener/internal/db"
+	"github.com/King0625/SD.urlshortener/internal/db/sqlc"
 	"github.com/King0625/SD.urlshortener/internal/handler"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -32,7 +33,7 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	queries := db.New(conn)
+	queries := sqlc.New(conn)
 	h := &handler.UrlHandler{
 		Queries: queries,
 		Conn:    conn,
