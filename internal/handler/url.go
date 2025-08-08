@@ -56,6 +56,7 @@ func (h *UrlHandler) Redirect(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		message = "short url not found"
 		utils.RespondError(w, http.StatusNotFound, "SHORT_URL_NOT_FOUND", message, nil)
+		return
 	}
 
 	http.Redirect(w, r, urlRow.OriginalUrl, http.StatusFound)
@@ -69,6 +70,7 @@ func (h *UrlHandler) DeleteUrlByCode(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		message = "delete url error"
 		utils.RespondError(w, http.StatusInternalServerError, "INTERNAL_ERROR", message, nil)
+		return
 	}
 
 	message = "delete short url successfully"
