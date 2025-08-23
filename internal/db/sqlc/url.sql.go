@@ -40,6 +40,22 @@ func (q *Queries) DeleteURLByCode(ctx context.Context, code string) error {
 	return err
 }
 
+const getFromOriginalUrl = `-- name: GetFromOriginalUrl :one
+SELECT id, code, original_url, created_at FROM urls WHERE original_url = $1
+`
+
+func (q *Queries) GetFromOriginalUrl(ctx context.Context, originalUrl string) (Url, error) {
+	row := q.db.QueryRow(ctx, getFromOriginalUrl, originalUrl)
+	var i Url
+	err := row.Scan(
+		&i.ID,
+		&i.Code,
+		&i.OriginalUrl,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const getURLByCode = `-- name: GetURLByCode :one
 SELECT id, code, original_url, created_at FROM urls WHERE code = $1
 `

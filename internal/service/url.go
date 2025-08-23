@@ -38,7 +38,12 @@ func (s *urlService) ShortenUrl(ctx context.Context, originalUrl string) (sqlc.U
 		Code:        code,
 		OriginalUrl: originalUrl,
 	}
-	return s.repo.Create(ctx, urlData)
+	result, err := s.repo.Create(ctx, urlData)
+	if err != nil {
+		return s.repo.GetFromOriginalUrl(ctx, originalUrl)
+	}
+
+	return result, nil
 }
 
 func (s *urlService) GetUrlByCode(ctx context.Context, code string) (sqlc.Url, error) {
