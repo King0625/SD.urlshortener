@@ -34,11 +34,11 @@ func NewUrlService(repo repository.UrlRepository) UrlService {
 
 func (s *urlService) ShortenUrl(ctx context.Context, originalUrl string) (sqlc.Url, error) {
 	code := generateCode(6)
-	todo := sqlc.CreateURLParams{
+	urlData := sqlc.CreateURLParams{
 		Code:        code,
 		OriginalUrl: originalUrl,
 	}
-	return s.repo.Create(ctx, todo)
+	return s.repo.Create(ctx, urlData)
 }
 
 func (s *urlService) GetUrlByCode(ctx context.Context, code string) (sqlc.Url, error) {
