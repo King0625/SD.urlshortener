@@ -11,9 +11,10 @@ import (
 	"github.com/King0625/SD.urlshortener/internal/handler"
 	"github.com/King0625/SD.urlshortener/internal/repository"
 	"github.com/King0625/SD.urlshortener/internal/service"
-	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/go-chi/httprate"
 	"github.com/joho/godotenv"
 )
 
@@ -52,6 +53,7 @@ func main() {
 	r.Use(middleware.RedirectSlashes)
 	r.Use(middleware.StripSlashes)
 	r.Use(middleware.ThrottleBacklog(20, 100, time.Second*10))
+	r.Use(httprate.LimitByRealIP(100, time.Minute))
 
 	r.Use(cors.Handler(cors.Options{
 		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
