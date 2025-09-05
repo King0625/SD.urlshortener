@@ -13,7 +13,21 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-
+  redis-for-urlshortener:
+    image: redis:8-alpine
+    container_name: redis-for-urlshortener
+    ports:
+      - "9736:6379"
+    volumes:
+      - ./redis-data:/data
+    env_file: ./.env
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'redis-cli -a ${REDIS_PASSWORD} ping'"] # Command to check Redis health
+      interval: 10s # How often to run the health check
+      timeout: 5s # How long to wait for the command to execute
+      retries: 5 # Number of consecutive failures before marking as unhealthy
+      start_period: 10s # Initial delay before health checks begin
   url-shortener:
     build:
       context: .
@@ -23,6 +37,8 @@ services:
       - "8080:8080"
     depends_on:
       postgres:
+        condition: service_healthy
+      redis-for-urlshortener:
         condition: service_healthy
     env_file: ./.env
     restart: on-failure
