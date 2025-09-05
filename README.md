@@ -4,7 +4,10 @@ This will be a long-term project, which will be made from easy to complex.
 
 ## project features
 - Built in Go version 1.23
-- Uses `go-chi/chi` as http router
+- Uses `go-chi/chi/v5` as http router
+  - `go-chi/chi/v5/middleware` for setting middlewares easily
+  - `go-chi/cors` for CORS policy
+  - `go-chi/httprate` for rate limiting
 - Uses `jackc/pgx/v5` as postgresql driver
 - Uses `sqlc-dev/sqlc/cmd/sqlc` for generating go code from raw sql queries
 - Uses `golang-migrate/migrate` for DB migrations
